@@ -37,8 +37,21 @@ h1 {
 
 main {
   display: grid;
-  grid-template-columns: minmax(0, 1fr) 360px;
+  grid-template-columns: minmax(0, 1fr) 6px var(--panel-w, 360px);
   height: calc(100vh - 56px);
+}
+
+/* Draggable divider between the image area and the settings panel */
+.resizer {
+  cursor: col-resize;
+  background: #2a2e3a;
+  touch-action: none;
+  transition: background 0.15s;
+}
+
+.resizer:hover,
+.resizer.active {
+  background: #5b6cff;
 }
 
 /* Left: the image, vertically centred and aligned to the left */
@@ -265,6 +278,10 @@ body.cropping .dimmable {
   main {
     grid-template-columns: 1fr;
     height: auto;
+  }
+
+  .resizer {
+    display: none;
   }
 
   .stage-wrap {
