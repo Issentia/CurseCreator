@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>cursecreator</title>
+  <link rel="icon" href="data:," />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Anton&family=Bangers&family=Oswald:wght@400;700&family=Pacifico&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <header>
+    <h1>cursecreator</h1>
+  </header>
+
+  <main>
+    <aside class="panel">
+      <section>
+        <h2>1. Image</h2>
+        <label class="btn">
+          Upload image
+          <input type="file" id="file" accept="image/*" hidden />
+        </label>
+        <div class="row">
+          <button id="cropBtn">Crop</button>
+          <button id="applyCropBtn" hidden>Apply crop</button>
+          <button id="cancelCropBtn" hidden>Cancel</button>
+        </div>
+        <p class="hint" id="cropHint" hidden>
+          Drag inside the box to move it, drag a corner to resize, or drag outside it to draw a new box.
+        </p>
+      </section>
+
+      <section>
+        <h2>2. Text</h2>
+        <div class="row">
+          <button id="addTextBtn">Add text</button>
+          <button id="deleteTextBtn" class="danger" disabled>Delete</button>
+        </div>
+        <ul id="layerList" class="layers"></ul>
+      </section>
+
+      <fieldset id="editor" disabled>
+        <legend>Edit selected text</legend>
+
+        <label>
+          Text
+          <textarea id="text" rows="3"></textarea>
+        </label>
+
+        <label>
+          Font
+          <select id="font"></select>
+        </label>
+
+        <label>
+          Size <span id="sizeVal"></span>
+          <input type="range" id="size" min="8" max="300" />
+        </label>
+
+        <label>
+          Color
+          <input type="color" id="color" />
+        </label>
+
+        <div class="row">
+          <label class="check"><input type="checkbox" id="bold" /> Bold</label>
+          <label class="check"><input type="checkbox" id="italic" /> Italic</label>
+        </div>
+
+        <label class="check">
+          <input type="checkbox" id="outline" /> Outline
+        </label>
+
+        <label>
+          Outline color
+          <input type="color" id="outlineColor" />
+        </label>
+
+        <label>
+          Outline width <span id="outlineWidthVal"></span>
+          <input type="range" id="outlineWidth" min="1" max="30" />
+        </label>
+      </fieldset>
+
+      <section>
+        <button id="downloadBtn" class="primary">Download PNG</button>
+      </section>
+    </aside>
+
+    <section class="stage-wrap">
+      <canvas id="stage" width="800" height="450"></canvas>
+      <p class="hint">Click and drag text on the image to move it. Press Delete to remove the selected text.</p>
+    </section>
+  </main>
+
+  <script src="app.js"></script>
+</body>
+</html>
