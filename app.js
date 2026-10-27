@@ -359,22 +359,21 @@ function drawSelection(g, l) {
 
 // ---------- rendering ----------
 
-// Sizes the canvas on screen so the whole image fits the left area, keeping its proportions.
-// The canvas's internal resolution is unchanged; only its displayed size is scaled.
+// The canvas is shown at its real pixel size. Only its height is limited to the space
+// available in the window; if the image is shorter than that, it stays at full size.
+// Width is never scaled, so wide images simply take up more horizontal room.
 function fitCanvas() {
   const wrap = canvas.closest(".stage-wrap");
   const hint = canvas.parentElement.querySelector(".hint");
   const cs = getComputedStyle(wrap);
-  const padX = parseFloat(cs.paddingLeft) + parseFloat(cs.paddingRight);
   const padY = parseFloat(cs.paddingTop) + parseFloat(cs.paddingBottom);
   const narrow = window.innerWidth <= 900;
 
-  const availW = wrap.clientWidth - padX;
   const availH = narrow
     ? window.innerHeight * 0.7
     : wrap.clientHeight - padY - (hint ? hint.offsetHeight : 0) - 12;
 
-  const s = Math.max(0.05, Math.min(availW / state.doc.w, availH / state.doc.h, 1));
+  const s = Math.max(0.05, Math.min(availH / state.doc.h, 1));
   canvas.style.width = `${Math.floor(state.doc.w * s)}px`;
   canvas.style.height = `${Math.floor(state.doc.h * s)}px`;
 }
