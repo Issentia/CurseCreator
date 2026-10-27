@@ -1217,6 +1217,54 @@ ui.exDownload.addEventListener("click", exportImage);
 
 window.addEventListener("resize", () => fitCanvas());
 
+// ---------- settings panel width (drag the divider) ----------
+
+const PANEL_KEY = "cursecreator-panel-width";
+const PANEL_MIN = 260;
+const PANEL_MAX_ABS = 720;
+
+function setPanelWidth(w) {
+  const max = Math.min(PANEL_MAX_ABS, window.innerWidth - 300);
+  const width = Math.round(clamp(w, PANEL_MIN, Math.max(PANEL_MIN, max)));
+  document.documentElement.style.setProperty("--panel-w", `${width}px`);
+  return width;
+}
+
+try {
+  const saved = Number(localStorage.getItem(PANEL_KEY));
+  if (saved) setPanelWidth(saved);
+} catch (e) {
+  // localStorage unavailable; keep the default width.
+}
+
+let panelWidthNow = null;
+
+ui.resizer.addEventListener("pointerdown", (e) => {
+  ui.resizer.setPointerCapture(e.pointerId);
+  ui.resizer.classList.add("active");
+});
+
+ui.resizer.addEventListener("pointermove", (e) => {
+  if (!ui.resizer.hasPointerCapture(e.pointerId)) return;
+  // The panel runs to the right edge of the window, so its width is the distance from the cursor to it.
+  panelWidthNow = setPanelWidth(window.innerWidth - e.clientX - 3);
+});
+
+const endPanelDrag = (e) => {
+  if (!ui.resizer.hasPointerCapture(e.pointerId)) return;
+  ui.resizer.releasePointerCapture(e.pointerId);
+  ui.resizer.classList.remove("active");
+  if (panelWidthNow) {
+    try {
+      localStorage.setItem(PANEL_KEY, String(panelWidthNow));
+    } catch (err) {
+      // Ignore storage errors; the width still applies for this visit.
+    }
+  }
+};
+ui.resizer.addEventListener("pointerup", endPanelDrag);
+ui.resizer.addEventListener("pointercancel", endPanelDrag);
+
 function init() {
   refreshFontOptions();
   loadProject();
