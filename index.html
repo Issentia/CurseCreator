@@ -13,87 +13,205 @@
 <body>
   <header>
     <h1>cursecreator</h1>
+    <span id="status" class="status"></span>
   </header>
 
   <main>
+    <section class="stage-wrap">
+      <div class="stage-inner">
+        <canvas id="stage" width="800" height="450"></canvas>
+        <p class="hint">
+          Drag layers to move them. Drag the corners of a selected image to resize it (aspect ratio is kept).
+          Arrow keys nudge (hold Shift for bigger steps), Delete removes, Ctrl+Z undoes, Ctrl+Y redoes.
+        </p>
+      </div>
+    </section>
+
     <aside class="panel">
-      <section>
-        <h2>1. Image</h2>
-        <label class="btn">
-          Upload image
-          <input type="file" id="file" accept="image/*" hidden />
-        </label>
+      <section class="dimmable">
+        <h2>Project</h2>
         <div class="row">
-          <button id="cropBtn">Crop</button>
-          <button id="applyCropBtn" hidden>Apply crop</button>
-          <button id="cancelCropBtn" hidden>Cancel</button>
+          <button id="undoBtn" class="small" disabled>Undo</button>
+          <button id="redoBtn" class="small" disabled>Redo</button>
+          <button id="newProjectBtn" class="small danger">New project</button>
+        </div>
+        <div class="row">
+          <label class="btn">
+            Add image(s)
+            <input type="file" id="imageInput" accept="image/*" multiple hidden />
+          </label>
+          <button id="addTextBtn">Add text</button>
+        </div>
+      </section>
+
+      <section>
+        <h2>Canvas crop</h2>
+        <p class="hint">Crops the whole canvas. Layers keep their position relative to the image.</p>
+        <button id="cropBtn" class="wide">Crop canvas</button>
+        <div class="row" id="cropActions" hidden>
+          <button id="cropApply" class="primary">Apply crop</button>
+          <button id="cropCancel">Cancel</button>
         </div>
         <p class="hint" id="cropHint" hidden>
           Drag inside the box to move it, drag a corner to resize, or drag outside it to draw a new box.
         </p>
       </section>
 
-      <section>
-        <h2>2. Text</h2>
-        <div class="row">
-          <button id="addTextBtn">Add text</button>
-          <button id="deleteTextBtn" class="danger" disabled>Delete</button>
-        </div>
+      <section class="dimmable">
+        <h2>Layers</h2>
         <ul id="layerList" class="layers"></ul>
+        <div class="row">
+          <button id="layerUp" class="small">Move up</button>
+          <button id="layerDown" class="small">Move down</button>
+          <button id="layerDup" class="small">Duplicate</button>
+          <button id="layerCenter" class="small">Center</button>
+          <button id="layerDel" class="small danger">Delete</button>
+        </div>
       </section>
 
-      <fieldset id="editor" disabled>
-        <legend>Edit selected text</legend>
+      <fieldset id="textEditor" class="dimmable" hidden>
+        <legend>Text layer</legend>
 
         <label>
-          Text
-          <textarea id="text" rows="3"></textarea>
+          Content
+          <textarea id="tText" rows="3"></textarea>
         </label>
 
         <label>
           Font
-          <select id="font"></select>
+          <select id="tFont"></select>
+        </label>
+        <label class="btn small">
+          Upload custom font (.ttf, .otf, .woff)
+          <input type="file" id="tFontUpload" accept=".ttf,.otf,.woff,.woff2" hidden />
         </label>
 
-        <label>
-          Size <span id="sizeVal"></span>
-          <input type="range" id="size" min="8" max="300" />
+        <label>Size <span id="tSizeVal"></span>
+          <input type="range" id="tSize" min="8" max="300" />
         </label>
 
-        <label>
-          Color
-          <input type="color" id="color" />
+        <label>Letter spacing <span id="tSpacingVal"></span>
+          <input type="range" id="tSpacing" min="-10" max="60" />
+        </label>
+
+        <label>Line height <span id="tLineHeightVal"></span>
+          <input type="range" id="tLineHeight" min="0.6" max="2.5" step="0.05" />
+        </label>
+
+        <label>Alignment
+          <select id="tAlign">
+            <option value="left">Left</option>
+            <option value="center">Center</option>
+            <option value="right">Right</option>
+          </select>
+        </label>
+
+        <label>Curve <span id="tCurveVal"></span>
+          <input type="range" id="tCurve" min="-100" max="100" />
+        </label>
+
+        <label>Rotation <span id="tRotationVal"></span>
+          <input type="range" id="tRotation" min="-180" max="180" />
         </label>
 
         <div class="row">
-          <label class="check"><input type="checkbox" id="bold" /> Bold</label>
-          <label class="check"><input type="checkbox" id="italic" /> Italic</label>
+          <label class="check"><input type="checkbox" id="tBold" /> Bold</label>
+          <label class="check"><input type="checkbox" id="tItalic" /> Italic</label>
         </div>
 
-        <label class="check">
-          <input type="checkbox" id="outline" /> Outline
+        <label>Color
+          <input type="color" id="tColor" />
+        </label>
+        <label class="check"><input type="checkbox" id="tGradient" /> Gradient fill</label>
+        <label>Gradient end color
+          <input type="color" id="tColor2" />
         </label>
 
-        <label>
-          Outline color
-          <input type="color" id="outlineColor" />
+        <label class="check"><input type="checkbox" id="tOutline" /> Outline</label>
+        <label>Outline color
+          <input type="color" id="tOutlineColor" />
+        </label>
+        <label>Outline width <span id="tOutlineWidthVal"></span>
+          <input type="range" id="tOutlineWidth" min="1" max="30" />
         </label>
 
-        <label>
-          Outline width <span id="outlineWidthVal"></span>
-          <input type="range" id="outlineWidth" min="1" max="30" />
+        <label class="check"><input type="checkbox" id="tShadow" /> Drop shadow</label>
+        <label>Shadow color
+          <input type="color" id="tShadowColor" />
+        </label>
+        <label>Shadow blur <span id="tShadowBlurVal"></span>
+          <input type="range" id="tShadowBlur" min="0" max="60" />
+        </label>
+        <label>Shadow offset X <span id="tShadowXVal"></span>
+          <input type="range" id="tShadowX" min="-60" max="60" />
+        </label>
+        <label>Shadow offset Y <span id="tShadowYVal"></span>
+          <input type="range" id="tShadowY" min="-60" max="60" />
+        </label>
+
+        <label class="check"><input type="checkbox" id="tGlow" /> Glow</label>
+        <label>Glow color
+          <input type="color" id="tGlowColor" />
+        </label>
+        <label>Glow size <span id="tGlowBlurVal"></span>
+          <input type="range" id="tGlowBlur" min="0" max="80" />
         </label>
       </fieldset>
 
-      <section>
-        <button id="downloadBtn" class="primary">Download PNG</button>
+      <fieldset id="imageEditor" class="dimmable" hidden>
+        <legend>Image layer</legend>
+        <p class="meta" id="iSize"></p>
+
+        <label>Rotation <span id="iRotationVal"></span>
+          <input type="range" id="iRotation" min="-180" max="180" />
+        </label>
+        <div class="row">
+          <button id="iRotLeft" class="small">Rotate -90°</button>
+          <button id="iRotRight" class="small">Rotate +90°</button>
+          <button id="iFlipH" class="small">Flip horizontal</button>
+          <button id="iFlipV" class="small">Flip vertical</button>
+        </div>
+
+        <h3>Filters</h3>
+        <label>Brightness <span id="iBrightVal"></span>
+          <input type="range" id="iBright" min="0" max="200" />
+        </label>
+        <label>Contrast <span id="iContrastVal"></span>
+          <input type="range" id="iContrast" min="0" max="200" />
+        </label>
+        <label>Saturation <span id="iSatVal"></span>
+          <input type="range" id="iSat" min="0" max="200" />
+        </label>
+        <label>Grayscale <span id="iGrayVal"></span>
+          <input type="range" id="iGray" min="0" max="100" />
+        </label>
+        <label>Blur <span id="iBlurVal"></span>
+          <input type="range" id="iBlur" min="0" max="20" />
+        </label>
+        <button id="iResetFilters" class="wide small">Reset filters</button>
+      </fieldset>
+
+      <section class="dimmable">
+        <h2>Export</h2>
+        <label>Format
+          <select id="exFormat">
+            <option value="png">PNG (transparent background)</option>
+            <option value="jpg">JPG (white background)</option>
+          </select>
+        </label>
+        <label>JPG quality <span id="exQualityVal"></span>
+          <input type="range" id="exQuality" min="10" max="100" value="92" />
+        </label>
+        <label>Size
+          <select id="exScale">
+            <option value="0.5">50%</option>
+            <option value="1" selected>100%</option>
+            <option value="2">200%</option>
+          </select>
+        </label>
+        <button id="exDownload" class="primary">Download</button>
       </section>
     </aside>
-
-    <section class="stage-wrap">
-      <canvas id="stage" width="800" height="450"></canvas>
-      <p class="hint">Click and drag text on the image to move it. Press Delete to remove the selected text.</p>
-    </section>
   </main>
 
   <script src="app.js"></script>
