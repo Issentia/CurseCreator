@@ -11,10 +11,15 @@ body {
   font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
   background: #14161c;
   color: #e8eaf0;
+  overflow: hidden;
 }
 
 header {
-  padding: 14px 24px;
+  height: 56px;
+  padding: 0 24px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
   background: #1c1f28;
   border-bottom: 1px solid #2a2e3a;
 }
@@ -25,30 +30,56 @@ h1 {
   letter-spacing: 0.5px;
 }
 
-h2 {
-  font-size: 13px;
-  text-transform: uppercase;
-  letter-spacing: 1px;
+.status {
+  font-size: 12px;
   color: #8a93a6;
-  margin: 0 0 10px;
 }
 
 main {
   display: grid;
-  grid-template-columns: 320px 1fr;
-  min-height: calc(100vh - 55px);
+  grid-template-columns: minmax(0, 1fr) 360px;
+  height: calc(100vh - 56px);
 }
 
+/* Left: the image, vertically centred and aligned to the left */
+.stage-wrap {
+  overflow: auto;
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  padding: 24px 32px;
+  min-width: 0;
+}
+
+.stage-inner {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+canvas {
+  display: block;
+  max-width: 100%;
+  max-height: calc(100vh - 160px);
+  height: auto;
+  background: repeating-conic-gradient(#2a2e3a 0% 25%, #232733 0% 50%) 50% / 20px 20px;
+  box-shadow: 0 6px 30px rgba(0, 0, 0, 0.4);
+  touch-action: none;
+  cursor: move;
+}
+
+/* Right: settings */
 .panel {
   background: #1c1f28;
-  border-right: 1px solid #2a2e3a;
+  border-left: 1px solid #2a2e3a;
   padding: 18px;
   overflow-y: auto;
 }
 
 .panel section,
 fieldset {
-  margin-bottom: 22px;
+  margin-bottom: 20px;
 }
 
 fieldset {
@@ -58,14 +89,26 @@ fieldset {
   min-width: 0;
 }
 
-fieldset:disabled {
-  opacity: 0.45;
-}
-
 legend {
   font-size: 13px;
   color: #8a93a6;
   padding: 0 6px;
+}
+
+h2 {
+  font-size: 13px;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  color: #8a93a6;
+  margin: 0 0 10px;
+}
+
+h3 {
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  color: #8a93a6;
+  margin: 14px 0 8px;
 }
 
 label {
@@ -74,8 +117,14 @@ label {
   margin-bottom: 10px;
 }
 
-label span {
+label span,
+.meta {
   color: #8a93a6;
+}
+
+.meta {
+  font-size: 13px;
+  margin: 0 0 12px;
 }
 
 .check {
@@ -89,6 +138,12 @@ label span {
   gap: 8px;
   flex-wrap: wrap;
   margin-bottom: 10px;
+}
+
+.hint {
+  font-size: 12px;
+  color: #8a93a6;
+  margin: 6px 0 10px;
 }
 
 button,
@@ -113,10 +168,19 @@ button:disabled {
   cursor: not-allowed;
 }
 
+button.small,
+.btn.small {
+  padding: 5px 9px;
+  font-size: 13px;
+}
+
+button.wide {
+  width: 100%;
+}
+
 button.primary {
   background: #5b6cff;
   border-color: #5b6cff;
-  width: 100%;
 }
 
 button.primary:hover:not(:disabled) {
@@ -162,11 +226,18 @@ input[type="range"] {
 .layers {
   list-style: none;
   padding: 0;
-  margin: 0;
+  margin: 0 0 10px;
+  max-height: 200px;
+  overflow-y: auto;
 }
 
 .layers li {
   margin-bottom: 6px;
+}
+
+.layers li.empty {
+  font-size: 13px;
+  color: #8a93a6;
 }
 
 .layers button {
@@ -182,39 +253,32 @@ input[type="range"] {
   border-color: #5b6cff;
 }
 
-.hint {
-  font-size: 12px;
-  color: #8a93a6;
-  margin: 6px 0 0;
+/* While cropping, the layer and settings sections are dimmed and inactive */
+body.cropping .dimmable {
+  opacity: 0.4;
+  pointer-events: none;
 }
 
-.stage-wrap {
-  padding: 24px;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 12px;
-  min-width: 0;
-}
+@media (max-width: 900px) {
+  body {
+    overflow: auto;
+  }
 
-canvas {
-  display: block;
-  max-width: 100%;
-  max-height: 75vh;
-  height: auto;
-  background: repeating-conic-gradient(#2a2e3a 0% 25%, #232733 0% 50%) 50% / 20px 20px;
-  box-shadow: 0 6px 30px rgba(0, 0, 0, 0.4);
-  touch-action: none;
-  cursor: move;
-}
-
-@media (max-width: 800px) {
   main {
     grid-template-columns: 1fr;
+    height: auto;
+  }
+
+  .stage-wrap {
+    overflow: visible;
+  }
+
+  canvas {
+    max-height: 70vh;
   }
 
   .panel {
-    border-right: none;
-    border-bottom: 1px solid #2a2e3a;
+    border-left: none;
+    border-top: 1px solid #2a2e3a;
   }
 }
