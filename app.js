@@ -5,8 +5,15 @@
 // =====================================================================
 
 const BASE_FONTS = [
-  "Impact", "Anton", "Bangers", "Oswald", "Pacifico",
-  "Arial", "Georgia", "Courier New", "Comic Sans MS",
+  // Meme / display
+  "Impact", "Anton", "Bebas Neue", "Bangers", "Oswald", "Russo One", "Righteous",
+  // Handwritten / script
+  "Permanent Marker", "Lobster", "Pacifico", "Dancing Script", "Caveat", "Shadows Into Light",
+  // Clean sans-serif
+  "Roboto", "Montserrat", "Open Sans", "Lato",
+  // System fonts (available on most computers)
+  "Arial", "Verdana", "Tahoma", "Trebuchet MS", "Georgia", "Times New Roman",
+  "Courier New", "Comic Sans MS",
 ];
 
 const STORAGE_KEY = "cursecreator-project-v1";
@@ -352,11 +359,32 @@ function drawSelection(g, l) {
 
 // ---------- rendering ----------
 
+// Sizes the canvas on screen so the whole image fits the left area, keeping its proportions.
+// The canvas's internal resolution is unchanged; only its displayed size is scaled.
+function fitCanvas() {
+  const wrap = canvas.closest(".stage-wrap");
+  const hint = canvas.parentElement.querySelector(".hint");
+  const cs = getComputedStyle(wrap);
+  const padX = parseFloat(cs.paddingLeft) + parseFloat(cs.paddingRight);
+  const padY = parseFloat(cs.paddingTop) + parseFloat(cs.paddingBottom);
+  const narrow = window.innerWidth <= 900;
+
+  const availW = wrap.clientWidth - padX;
+  const availH = narrow
+    ? window.innerHeight * 0.7
+    : wrap.clientHeight - padY - (hint ? hint.offsetHeight : 0) - 12;
+
+  const s = Math.max(0.05, Math.min(availW / state.doc.w, availH / state.doc.h, 1));
+  canvas.style.width = `${Math.floor(state.doc.w * s)}px`;
+  canvas.style.height = `${Math.floor(state.doc.h * s)}px`;
+}
+
 function render() {
   if (canvas.width !== state.doc.w || canvas.height !== state.doc.h) {
     canvas.width = state.doc.w;
     canvas.height = state.doc.h;
   }
+  fitCanvas();
   ctx.setTransform(1, 0, 0, 1, 0, 0);
   ctx.clearRect(0, 0, canvas.width, canvas.height);
 
@@ -1187,6 +1215,8 @@ ui.exQuality.addEventListener("input", () => {
 ui.exDownload.addEventListener("click", exportImage);
 
 // ---------- start ----------
+
+window.addEventListener("resize", () => fitCanvas());
 
 function init() {
   refreshFontOptions();
