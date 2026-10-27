@@ -60,9 +60,7 @@ main {
 
 canvas {
   display: block;
-  max-width: 100%;
-  max-height: calc(100vh - 160px);
-  height: auto;
+  flex-shrink: 0;
   background: repeating-conic-gradient(#2a2e3a 0% 25%, #232733 0% 50%) 50% / 20px 20px;
   box-shadow: 0 6px 30px rgba(0, 0, 0, 0.4);
   touch-action: none;
@@ -271,10 +269,6 @@ body.cropping .dimmable {
 
   .stage-wrap {
     overflow: visible;
-  }
-
-  canvas {
-    max-height: 70vh;
   }
 
   .panel {
